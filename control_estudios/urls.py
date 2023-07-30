@@ -2,11 +2,9 @@ from django.contrib import admin
 from django.urls import path
 
 from control_estudios.views import (
-    listar_cursos, crear_curso, buscar_cursos, eliminar_curso,
-    editar_curso, EstudianteListView, EstudianteCreateView,
-    EstudianteDetailView, EstudianteUpdateView, EstudianteDeleteView,
-    ProfesorListView, ProfesorCreateView,
-    ProfesorDetailView, ProfesorUpdateView, ProfesorDeleteView
+    listar_cursos, crear_curso, buscar_cursos, eliminar_curso, editar_curso,
+    listar_estudiantes, crear_estudiante, #eliminar_estudiante, editar_estudiante,
+    listar_profesores, crear_profesor
 )
 
 # Son las URLS especificas de la app
@@ -18,15 +16,11 @@ urlpatterns = [
     path("editar-curso/<int:id>/", editar_curso, name="editar_curso"),
     path('eliminar-curso/<int:id>/', eliminar_curso, name="eliminar_curso"),
     # URLS de estudiantes
-    path("estudiantes/", EstudianteListView.as_view(), name="lista_estudiantes"),
-    path('estudiantes/<int:pk>/', EstudianteDetailView.as_view(), name="ver_estudiante"),
-    path('crear-estudiante/', EstudianteCreateView.as_view(), name="crear_estudiante"),
-    path('editar-estudiante/<int:pk>/', EstudianteUpdateView.as_view(), name="editar_estudiante"),
-    path('eliminar-estudiante/<int:pk>/', EstudianteDeleteView.as_view(), name="eliminar_estudiante"),
+    path("estudiantes/", listar_estudiantes, name="lista_estudiantes"),
+    path('crear-estudiante/', crear_estudiante, name="crear_estudiante"),
+    #path('editar-estudiante/<int:pk>/', editar_estudiante, name="editar_estudiante"),
+    #path('eliminar-estudiante/<int:pk>/', eliminar_estudiante, name="eliminar_estudiante"),
     # URLS de profesores
-    path("profesores/", ProfesorListView.as_view(), name="lista_profesores"),
-    path('profesores/<int:pk>/', ProfesorDetailView.as_view(), name="ver_profesor"),
-    path('crear-profesor/', ProfesorCreateView.as_view(), name="crear_profesor"),
-    path('editar-profesor/<int:pk>/', ProfesorUpdateView.as_view(), name="editar_profesor"),
-    path('eliminar-profesor/<int:pk>/', ProfesorDeleteView.as_view(), name="eliminar_profesor"),
+    path("profesores/", listar_profesores, name="lista_profesores"),
+    path('crear-profesor/', crear_profesor, name="crear_profesor"),
 ]

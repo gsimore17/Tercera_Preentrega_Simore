@@ -4,12 +4,11 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 from django.db.models import Q
 
 from control_estudios.models import Curso, Estudiante, Profesor
-from control_estudios.forms import CursoFormulario
+from control_estudios.forms import CursoFormulario, EstudianteFormulario, ProfesorFormulario
 
 #Vistas relativas a la app
 # Vistas de cursos
 def listar_cursos(request):
-    # Data de pruebas, más adelante la llenaremos con nuestros cursos de verdad
     contexto = {
         "cursos": Curso.objects.all(), #hago dinamica la base de datos
     }
@@ -19,32 +18,6 @@ def listar_cursos(request):
         context=contexto,
     )
     return http_response
-
-
-def crear_curso_version_1(request):
-    """
-    Vista no usada
-    Solo con fines academicos de consulta
-    """
-    if request.method == "POST":  # Es un post, user quiere crear curso
-        data = request.POST  # Diccionario con la data del formulario
-        nombre = data['nombre']
-        comision = data['comision']
-        # creo un curso en memoria RAM
-        curso = Curso(nombre=nombre, comision=comision)
-        # .save lo guarda en la base de datos
-        curso.save()
-
-        # Envio al usuario a la lista de cursos
-        url_exitosa = reverse('lista_cursos')
-        return redirect(url_exitosa)
-    else:  # GET
-        http_response = render(
-            request=request,
-            template_name='control_estudios/formulario_curso_a_mano.html',
-        )
-        return http_response
-
 
 def crear_curso(request):
     if request.method == "POST":
@@ -72,17 +45,13 @@ def crear_curso(request):
     )
     return http_response
 
-
 def buscar_cursos(request):
    if request.method == "POST":
         data = request.POST
         busqueda = data["busqueda"]
         # Filtro simple
         cursos = Curso.objects.filter(comision__contains=busqueda)
-        # Ejemplo filtro avanzado
-        # cursos = Curso.objects.filter(
-        #     Q(nombre=busqueda) | Q(comision__contains=busqueda)
-        # )
+        
         contexto = {
             "cursos": cursos,
         }
@@ -93,7 +62,6 @@ def buscar_cursos(request):
         )
         return http_response
 
-
 def eliminar_curso(request, id):
     # obtienes el curso de la base de datos
     curso = Curso.objects.get(id=id)
@@ -103,7 +71,6 @@ def eliminar_curso(request, id):
         # redireccionamos a la URL exitosa
         url_exitosa = reverse('lista_cursos')
         return redirect(url_exitosa)
-
 
 def editar_curso(request, id):
     curso = Curso.objects.get(id=id)
@@ -130,11 +97,8 @@ def editar_curso(request, id):
         context={'formulario': formulario},
     )
 
-
-# Vistas de estudiantes (basadas en clases)
 def listar_estudiantes(request):
     contexto = {
-        "profesor": "Pedro",
         "estudiantes": Estudiante.objects.all(), #hago dinamica la base de datos, puede haber datos constantes
     }
     http_response = render(
@@ -145,34 +109,72 @@ def listar_estudiantes(request):
     return http_response
 
 
-class EstudianteListView(ListView):
-    model = Estudiante
-    template_name = 'control_estudios/lista_estudiantes.html'
+def crear_estudiante(request):
+    if request.method == "POST":
+        # Creo un objeto formulario con la data que envio el usuario
+        formulario = EstudianteFormulario(request.POST)
 
-class EstudianteCreateView(CreateView):
-    model = Estudiante
-    fields = ('apellido', 'nombre', 'email', 'dni')
-    success_url = reverse_lazy('lista_estudiantes')
+        if formulario.is_valid():
+            data = formulario.cleaned_data  # es un diccionario
+            nombre = data["nombre"]
+            apellido = data["apellido"]
+            dni = data["dni"]
+            email = data["email"]
+            telefono = data["telefono"]
+            fecha_nacimiento = data["fecha_nacimiento"]
+            # creo un estudiante en memoria RAM
+            estudiante = Estudiante(nombre=nombre, apellido=apellido, dni=dni, email=email, telefono=telefono, fecha_nacimiento=fecha_nacimiento)
+            
+            estudiante.save()
 
+            url_exitosa = reverse('lista_estudiantes')  # estudios/estudiantes/
+            return redirect(url_exitosa)
+    else:  # GET
+        formulario = EstudianteFormulario()
+    http_response = render(
+        request=request,
+        template_name='control_estudios/formulario_estudiante.html',
+        context={'formulario': formulario}
+    )
+    return http_response
 
-class EstudianteDetailView(DetailView):
-    model = Estudiante
-    success_url = reverse_lazy('lista_estudiantes')
+#def eliminar_estudiante(request, id):
+#    # obtienes el curso de la base de datos
+#    estudiante = Estudiante.objects.get(id=id)
+#    if request.method == "POST":
+#        # borra el curso de la base de datos
+#        estudiante.delete()
+#        # redireccionamos a la URL exitosa
+#        url_exitosa = reverse('lista_estudiantes')
+#        return redirect(url_exitosa)
 
-class EstudianteUpdateView(UpdateView):
-    model = Estudiante
-    fields = ('apellido', 'nombre', 'email', 'dni')
-    success_url = reverse_lazy('lista_estudiantes')
+#def editar_estudiante(request, id):
+#    estudiante = Estudiante.objects.get(id=id)
+#    if request.method == "POST":
+#        formulario = EstudianteFormulario(request.POST)
 
+#        if formulario.is_valid():
+ #           data = formulario.cleaned_data
+#            estudiante.nombre = data['nombre']
+#            estudiante.apellido = data['apellido']
+#            estudiante.save()
 
-class EstudianteDeleteView(DeleteView):
-    model = Estudiante
-    success_url = reverse_lazy('lista_estudiantes')
+#            url_exitosa = reverse('lista_estudiantes')
+#            return redirect(url_exitosa)
+#    else:  # GET
+#        inicial = {
+#            'nombre': estudiante.nombre,
+#            'apellido': estudiante.apellido,
+#        }
+#        formulario = EstudianteFormulario(initial=inicial)
+#    return render(
+#        request=request,
+#        template_name='control_estudios/formulario_estudiante.html',
+#        context={'formulario': formulario},
+#    )
 
-
-# Vistas de estudiantes (basadas en clases)
+# Vistas de profesores
 def listar_profesores(request):
-    # Data de pruebas, más adelante la llenaremos con nuestros cursos de verdad
     contexto = {
         "profesores": Profesor.objects.all(), #hago dinamica la base de datos, puede haber datos constantes
     }
@@ -183,28 +185,32 @@ def listar_profesores(request):
     )
     return http_response
 
-class ProfesorListView(ListView):
-    model = Profesor
-    template_name = 'control_estudios/lista_profesores.html'
+def crear_profesor(request):
+    if request.method == "POST":
+        # Creo un objeto formulario con la data que envio el usuario
+        formulario = ProfesorFormulario(request.POST)
 
+        if formulario.is_valid():
+            data = formulario.cleaned_data  # es un diccionario
+            nombre = data["nombre"]
+            apellido = data["apellido"]
+            dni = data["dni"]
+            email = data["email"]
+            fecha_nacimiento = data["fecha_nacimiento"]
+            profesion = data["profesion"]
+            
+            # creo un estudiante en memoria RAM
+            profesor = Profesor(nombre=nombre, apellido=apellido, dni=dni, email=email, fecha_nacimiento=fecha_nacimiento, profesion=profesion)
+            
+            profesor.save()
 
-class ProfesorCreateView(CreateView):
-    model = Profesor
-    fields = ('apellido', 'nombre', 'email', 'dni')
-    success_url = reverse_lazy('lista_profesores')
-
-
-class ProfesorDetailView(DetailView):
-    model = Profesor
-    success_url = reverse_lazy('lista_profesores')
-
-
-class ProfesorUpdateView(UpdateView):
-    model = Profesor
-    fields = ('apellido', 'nombre', 'email', 'dni')
-    success_url = reverse_lazy('lista_profesores')
-
-
-class ProfesorDeleteView(DeleteView):
-    model = Profesor
-    success_url = reverse_lazy('lista_profesores')
+            url_exitosa = reverse('lista_profesores')  # estudios/estudiantes/
+            return redirect(url_exitosa)
+    else:  # GET
+        formulario = ProfesorFormulario()
+    http_response = render(
+        request=request,
+        template_name='control_estudios/formulario_profesor.html',
+        context={'formulario': formulario}
+    )
+    return http_response

@@ -6,7 +6,7 @@ Lista de profesores
 
 {% block contenido %}
 <h1>Lista de profesores</h1>
-<a href="{% url 'crear_estudiante' %}">Crear profesor</a>
+<a href="{% url 'crear_profesor' %}">Crear profesor</a>
 <br>
 
 <table class="table">
@@ -15,26 +15,19 @@ Lista de profesores
       <th>ID</th>
       <th>Nombre</th>
       <th>Apellido</th>
+      <th>Dni</th>
+      <th>Profesion</th>
       <td></td>
       <td></td>
       <td></td>
     </tr>
-    {% for profesor in object_list %}
+    {% for profesor in profesores %}
     <tr>
       <td>{{ profesor.id }}</td>
       <td>{{ profesor.nombre }}</td>
       <td>{{ profesor.apellido }}</td>
-      <td>
-        <a href="{% url 'ver_profesor' profesor.id %}">Ver</a>
-      </td>
-      <td>
-        <a href="{% url 'editar_profesor' profesor.id %}">Editar</a>
-      </td>
-      <td>
-        <a href="{% url 'eliminar_profesor' profesor.id %}">
-          <i class="bi bi-trash"></i>
-        </a>
-      </td>
+      <td>{{ profesor.dni }}</td>
+      <td>{{ profesor.profesion }}</td>
     </tr>
     {% endfor %}
   </tbody>

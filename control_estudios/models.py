@@ -12,13 +12,13 @@ class Curso(models.Model):
 class Estudiante(models.Model):
     apellido = models.CharField(max_length=256)
     nombre = models.CharField(max_length=256)
+    dni = models.IntegerField()
     email = models.EmailField(blank=True)
-    telefono = models.CharField(max_length=20, blank=True)
-    dni = models.CharField(max_length=32)
+    telefono = models.IntegerField()
     fecha_nacimiento = models.DateField(null=True)
 
     def __str__(self):
-        return f"{self.apellido}, {self.nombre}"
+        return f"{self.apellido}, {self.nombre}, {self.dni}, {self.email}, {self.telefono}, {self.fecha_nacimiento}"
 
 class Profesor(models.Model):
     apellido = models.CharField(max_length=256)
@@ -27,12 +27,8 @@ class Profesor(models.Model):
     email = models.EmailField(blank=True)
     fecha_nacimiento = models.DateField(null=True, blank=True)
     profesion = models.CharField(max_length=128)
-    bio = models.TextField(blank=True)
+    
 
     def __str__(self):
-        return f"{self.apellido}, {self.nombre}"
+        return f"{self.apellido}, {self.nombre}, {self.dni}, {self.email}, {self.fecha_nacimiento}, {self.profesion}"
 
-#class Entregable(models.Model):
-#    nombre = models.CharField(max_length=256)
-#    fecha_entrega = models.DateTimeField(auto_now_add=True)
-#    esta_aprobado = models.BooleanField(default=False) 

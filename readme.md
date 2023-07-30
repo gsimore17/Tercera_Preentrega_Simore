@@ -17,3 +17,8 @@ python manage.py createsuperuser
 + crear tu usuario de admin, luego
 + en la dirección agregar /admin/
 + logearte con tu superusuario
++
++ mi superusuario es admin y contraseña: super123
+
+## Fechas de nacimiento
++ Para agregar fechas de nacimiento el formato es AAAA-MM-DD
