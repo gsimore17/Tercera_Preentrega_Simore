@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.db.models import Q
 
-from control_estudios.models import Curso, Estudiante
+from control_estudios.models import Curso, Estudiante, Profesor
 from control_estudios.forms import CursoFormulario
 
 #Vistas relativas a la app
@@ -11,7 +11,7 @@ from control_estudios.forms import CursoFormulario
 def listar_cursos(request):
     # Data de pruebas, más adelante la llenaremos con nuestros cursos de verdad
     contexto = {
-        "cursos": Curso.objects.all(),
+        "cursos": Curso.objects.all(), #hago dinamica la base de datos
     }
     http_response = render(
         request=request,
@@ -132,10 +132,22 @@ def editar_curso(request, id):
 
 
 # Vistas de estudiantes (basadas en clases)
+def listar_estudiantes(request):
+    contexto = {
+        "profesor": "Pedro",
+        "estudiantes": Estudiante.objects.all(), #hago dinamica la base de datos, puede haber datos constantes
+    }
+    http_response = render(
+        request=request,
+        template_name='control_estudios/lista_estudiantes.html',
+        context=contexto,
+    )
+    return http_response
+
+
 class EstudianteListView(ListView):
     model = Estudiante
     template_name = 'control_estudios/lista_estudiantes.html'
-
 
 class EstudianteCreateView(CreateView):
     model = Estudiante
@@ -147,7 +159,6 @@ class EstudianteDetailView(DetailView):
     model = Estudiante
     success_url = reverse_lazy('lista_estudiantes')
 
-
 class EstudianteUpdateView(UpdateView):
     model = Estudiante
     fields = ('apellido', 'nombre', 'email', 'dni')
@@ -157,3 +168,43 @@ class EstudianteUpdateView(UpdateView):
 class EstudianteDeleteView(DeleteView):
     model = Estudiante
     success_url = reverse_lazy('lista_estudiantes')
+
+
+# Vistas de estudiantes (basadas en clases)
+def listar_profesores(request):
+    # Data de pruebas, más adelante la llenaremos con nuestros cursos de verdad
+    contexto = {
+        "profesores": Profesor.objects.all(), #hago dinamica la base de datos, puede haber datos constantes
+    }
+    http_response = render(
+        request=request,
+        template_name='control_estudios/lista_profesores.html',
+        context=contexto,
+    )
+    return http_response
+
+class ProfesorListView(ListView):
+    model = Profesor
+    template_name = 'control_estudios/lista_profesores.html'
+
+
+class ProfesorCreateView(CreateView):
+    model = Profesor
+    fields = ('apellido', 'nombre', 'email', 'dni')
+    success_url = reverse_lazy('lista_profesores')
+
+
+class ProfesorDetailView(DetailView):
+    model = Profesor
+    success_url = reverse_lazy('lista_profesores')
+
+
+class ProfesorUpdateView(UpdateView):
+    model = Profesor
+    fields = ('apellido', 'nombre', 'email', 'dni')
+    success_url = reverse_lazy('lista_profesores')
+
+
+class ProfesorDeleteView(DeleteView):
+    model = Profesor
+    success_url = reverse_lazy('lista_profesores')
