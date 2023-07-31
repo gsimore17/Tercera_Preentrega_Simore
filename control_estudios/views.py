@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
-from django.db.models import Q
+from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView #no los uso
+from django.db.models import Q #no lo uso
 
 from control_estudios.models import Curso, Estudiante, Profesor
 from control_estudios.forms import CursoFormulario, EstudianteFormulario, ProfesorFormulario
@@ -111,11 +111,11 @@ def listar_estudiantes(request):
 
 def crear_estudiante(request):
     if request.method == "POST":
-        # Creo un objeto formulario con la data que envio el usuario
+        
         formulario = EstudianteFormulario(request.POST)
 
         if formulario.is_valid():
-            data = formulario.cleaned_data  # es un diccionario
+            data = formulario.cleaned_data  
             nombre = data["nombre"]
             apellido = data["apellido"]
             dni = data["dni"]
